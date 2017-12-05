@@ -1,0 +1,24 @@
+#2017.12.5
+#目标站点：ttp://tu.58game.com/gallery/xxxxx.html?v=single
+#他这个网站是局步翻页的但是骚的是他右上角有一个单页模式
+
+
+#coding=utf-8
+import requests
+from bs4 import BeautifulSoup 
+
+j = 1
+for i in range(17143,17163):                                           #循环页面页数
+    headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1" }
+    single_url = "http://tu.58game.com/gallery/"+str(i)+".html?v=single"
+    single_html = requests.get(single_url,headers=headers)
+    single_soup = BeautifulSoup(single_html.text,'lxml')
+    singleimg_url = single_soup.find('div',class_='img_dy').find_all('img')
+    for a in singleimg_url:
+        src = 'http:'+a['src']
+        r = requests.get(src)
+        r.encoding='utf-8'
+        with open('N0.%d.jpg'%j,'wb') as f:
+            print('正在爬第'+str(j)+'张')
+            f.write(r.content)
+            j+=1
