@@ -1,0 +1,24 @@
+#http://www.haogirl.net/pic/  套图爬取
+
+#coding=utf-8
+import requests
+from bs4 import BeautifulSoup
+
+
+headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) 
+AppleWebKit/537.1 (KHTML, like Gecko) 
+Chrome/22.0.1207.1 Safari/537.1" }
+onetar_url = 'http://www.haogirl.net/pic/9429'                       #单页图片链接           
+onetar_html = requests.get(onetar_url,headers=headers)               # 解析html    
+onetar_soup = BeautifulSoup(onetar_html.text,'lxml')
+onetarimg_url = onetar_soup.find('div',class_='text')                 #查找  
+onetarimg_urls=onetarimg_url.find_all('img')
+i =1
+for image in onetarimg_urls:
+    image_url = image['src']
+    r = "http://www.haogirl.net/"+image_url[3:]                      #由于img的链接是..//xxx所以截取第三个元素到后面
+    re = requests.get(r)
+    re.encoding='utf-8'
+    with open ('%d.jpg'%i,'wb') as f:
+        f.write(re.content)
+        i+=1
