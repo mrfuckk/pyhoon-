@@ -1,0 +1,29 @@
+#2012.12.5
+#目标站点：https://tuchong.com
+#高质量的图片网站
+#利用一种我不知道的技术来浏览图片，F12也无法查看图片的链接，可是我们打开
+#源代码可以搜索到链接，利用这一点可以下载指定图集的图片
+
+
+
+
+
+
+#coding=utf-8
+import requests
+from bs4 import BeautifulSoup
+
+
+i=35
+page_url = 'https://tuchong.com/1187945/15879420/'
+headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1" }
+page_html = requests.get(page_url,headers=headers)
+page_soup = BeautifulSoup(page_html.text,'lxml')
+image_url = page_soup.find('article',class_='post-content').find_all('img')
+for a in image_url:
+    src = a['src']
+    r = requests.get(src)
+    with open('NO.%d.jpg'%i,'wb') as f:
+        print('NO.%d'%i)
+        f.write(r.content)
+        i+=1
