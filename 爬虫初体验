@@ -1,0 +1,47 @@
+#2017.12.3
+
+
+#垃圾妹子图
+#coding=utf-8
+import requests
+from bs4 import BeautifulSoup
+import os
+url = "http://www.enterdesk.com/special/meizi/"   #垃圾妹子图的链接
+r = requests.get(url)                             #get到url
+r.encoding="utf-8"                                #把编码转化为utf-8国际编码
+soup = BeautifulSoup(r.text,'html.parser')        #解析r.text
+#data = soup.find('dd',{'class':'egene_spe_pic_li'})#图片在这个标签内，骚操作是不管他，我直接查找'img'标签
+grils = soup.find_all('img')                          #这就是骚操作
+i =1                                                  #用1，2，3，4来为图片取名
+for gril in grils:
+    gril_url = gril['src']                           #在错别字girl中查找src
+    re = requests.get(gril_url)                      #获取girl的链接
+    re.encoding='utf-8'
+    with open('girl%d'%i,'wb') as f:                   #文件写入
+        f.write(re.content)
+        i+=1
+        
+        
+        
+#第二个        
+#coding=utf-8
+import requests
+from bs4 import BeautifulSoup
+import os
+
+#burl = 'http://www.4j4j.cn/beauty/photos/25196.html'                            #另一个图片网站
+for url in range(25190,25196):                                                   #从xxx到xxx页
+    gurl = 'http://www.4j4j.cn/beauty/photos/'+str(url)+'.html'                  #用循环来制造其他链接
+    r = requests.get(gurl)                                                       #获取资源
+    r.encoding='utf-8'
+    soup = BeautifulSoup(r.text,'html.parser')
+    data = soup.find('div',{'class':'beauty_details_imgs_box'})
+    girls = data.find_all('img')
+    i = 1
+    for girl in girls:
+        girl_url = girl['src']
+        r = requests.get(girl_url)
+        r.encoding = "utf-8"
+        with open('girl_%d.jpg'%i,'wb') as f:
+            f.write(r.content)
+            i+=1
