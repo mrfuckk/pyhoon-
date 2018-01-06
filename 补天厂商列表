@@ -1,0 +1,22 @@
+# coding=utf-8
+import requests
+from bs4 import BeautifulSoup
+
+
+for i in range(20,50):
+    url = 'http://loudong.360.cn/Loo/index/p/'+str(i)+'.html'  # 生成补天的页数
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content,"html.parser")
+    for bug in soup.find_all('dl',class_='loops'):
+        bug_first = bug.find('a').get_text()                     #漏洞的厂商名字
+        #bug_last = bug.find_all('span')            #漏洞的种类，但是放到bing中搜不需要
+        #bug_last = bug_last[2].get_text()
+        urls = 'http://cn.bing.com/search?q='+bug_first         #利用bing搜索漏洞厂商
+        urlpage = requests.get(urls)
+        urlsoup = BeautifulSoup(urlpage.content,"html.parser")
+        for b in urlsoup.find_all('ol',id='b_results'):         #只抓取搜索结果的第一条
+            bugurl = b.find('a').get('href')
+            fo = open('url1.txt','a')                           #写入url
+            fo.write(bugurl)
+
+
