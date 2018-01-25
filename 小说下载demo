@@ -1,0 +1,20 @@
+import requests
+from bs4 import BeautifulSoup
+
+
+hosturl = 'http://网址'                            #添加小说主页，也可以是导航页
+hosthtml = requests.get(hosturl)
+hostsoup = BeautifulSoup(hosthtml.content,'lxml')        
+hosttext = hostsoup.find('div',class_='novelList')         #小说的url列表在novelist中
+for a in hosttext:
+    hrefurl ='http://网址'+a['href']
+    html = requests.get(hrefurl)                          #根据刚才的url来下载每一篇文章的内容
+    htmlsoup = BeautifulSoup(html.content,'lxml')
+    htmltext = htmlsoup.find('div',class_='novelContent')   #找到内容的标签
+    htmltext = htmltext.encode('utf-8')                         #文章解码为utf8的格式
+    htmlname = htmlsoup.find('div',class_='col-xs-12 col-sm-9 col-md-10')     #找到每篇文章的标题，等下好用标题来命名
+    htmlname = htmlname.find('h3').get_text()                                #只摘取h3标签的文体
+    f = open(htmlname+'.txt','w')                                           #写入文章和内容
+    f.write(htmltext)
+    f.close()
+    print(htmlname+'is ok！')                                               
