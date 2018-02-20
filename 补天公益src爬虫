@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+# coding:utf-8
+import requests,time
+from bs4 import BeautifulSoup
+ 
+head = {'User-Agent': \
+            'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36'}
+cook = {"Cookie":"你的cookie"}
+for i in range(59587,59600):
+    url = 'https://butian.360.cn/Loo/submit?cid='+str(i)+''
+    print(url)
+    html = requests.get(url, headers = head,cookies = cook)
+    soup = BeautifulSoup(html.text,'lxml')
+    bugurl = soup.find(name='input',attrs={"name":"host"})
+    bugurl = bugurl.attrs['value']
+    with open('target.txt','a') as t:
+                    t.write(bugurl+'\n')
+                    print(bugurl)
