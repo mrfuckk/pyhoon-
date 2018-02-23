@@ -24,3 +24,40 @@ for image in onetarimg_urls:
     with open ('%d.jpg'%i,'wb') as f:
         f.write(re.content)
         i+=1
+******************************************************************************************************
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import requests
+from bs4 import BeautifulSoup
+
+
+page=37524
+while(1):#使用循环一直进行
+	i=1
+	url = 'http://www.jdlingyu.fun/'+str(page)+'/'
+	print(url)
+	headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
+	}
+	html = requests.get(url,headers=headers)
+	if html.status_code == requests.codes.ok:#判断状态码，排除404
+		try:
+			htmlsoup = BeautifulSoup(html.text,'lxml')
+			title = htmlsoup.find('h2',class_='main-title').text  #get  a photo  title
+			photourl = htmlsoup.find('div',class_='main-body').find_all('a')
+		except AttributeError:
+			page+=1	
+			continue;#继续循环，因为有的url会跳转到home页，也就咩有find_all这些属性
+		except requests.exceptions.ConnectionError:
+			page+=1
+			continue
+		for j in photourl:
+			href = j['href']
+			re = requests.get(href)
+			with open(title+'.%d.jpg'%i,'wb') as f:
+				print("it is downloading "+title+" NO.%d"%i)
+				f.write(re.content)
+		    	i+=1
+		page+=1
+		i=1
+	else:
+		page+=1
