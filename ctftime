@@ -1,0 +1,50 @@
+#coding:utf-8
+
+import requests
+import re
+
+#每个比赛的url
+
+def event(url):
+    html = requests.get(url,headers = headers)
+    pattern = re.compile(r"<a.*Event tasks and writeups")
+    url = pattern.findall(html.text)
+    tasksurl = "https://ctftime.org"+(str(url)[12:-60])
+    tasks(tasksurl)
+
+#找到每个tasks列表
+def tasks(url):
+    html = requests.get(url,headers=headers)
+    pattern = re.compile(r"<a href=.*\D</a></td>")
+    urllist = pattern.findall(html.text)
+    for tasksurl in urllist:
+        print tasksurl[21:-9]#标题
+        url = "https://ctftime.org/"+(tasksurl[10:19])
+        task(url)
+
+
+#找到每个task列表
+def task(url):
+    html = requests.get(url,headers=headers)
+    pattern = re.compile(r"<a href=.*Read writeup</a>")
+    urllist = pattern.findall(html.text)
+    for taskurl in urllist:
+        url = "https://ctftime.org/"+(taskurl[9:-18])
+        wp(url)
+
+
+
+##每个wp的地址
+def wp(url):
+    html = requests.get(url,headers=headers)
+    pattern = re.compile(r"<a href=.*Original writeup</a>")
+    wplist = pattern.findall(html.text)
+    for wpurl in wplist:
+        print wpurl[9:-60]
+
+
+if __name__=='__main__':
+    url = "https://ctftime.org/event/654"
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36',
+        'referer': 'https://ctftime.org/'}
+    event(url)
